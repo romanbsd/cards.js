@@ -22,9 +22,10 @@ discardPile.x += 50;
 
 
 //Let's deal when the Deal button is pressed:
-$('#deal').click(function() {
+var deal = document.getElementById('deal');
+deal.addEventListener('click', function() {
 	//Deck has a built in method to deal to hands.
-	$('#deal').hide();
+	deal.style.display = 'none';
 	deck.deal(5, [upperhand, lowerhand], 50, function() {
 		//This is a callback function, called when the dealing
 		//is done.

@@ -4,26 +4,26 @@
 		<title>cards.js - Write card games in Javascript.</title>
 		<style>
 			html { background-color:#092E20; }
-			body { 
+			body {
 				position:relative;
-				border-radius:8px; 
-				box-shadow:black 0px 0px 2px; 
-				width: 600px; 
-				background:#FFF; 
-				margin:20px auto; 
-				border:solid 1px black; 
-				font-family: arial, sans-serif; 
-				padding:50px;  
+				border-radius:8px;
+				box-shadow:black 0px 0px 2px;
+				width: 600px;
+				background:#FFF;
+				margin:20px auto;
+				border:solid 1px black;
+				font-family: arial, sans-serif;
+				padding:50px;
 			}
 			#buttons {
 				text-align:center;
 			}
-			
+
 			a img {
-				position: absolute; 
-				top: 0; 
-				right: 0; 
-				border: 0;			
+				position: absolute;
+				top: 0;
+				right: 0;
+				border: 0;
 			}
 			button {
 				height:30px;
@@ -50,7 +50,7 @@
 				padding:7px;
 				display:none;
 			}
-			
+
 			#card-table {
 				background-color:green;
 				height:400px;
@@ -64,74 +64,37 @@
 				box-shadow:#111 1px 1px 2px;
 			}
 			a:visited {color:blue;}
-			
+
 			footer {
 				font-size : 12px;
 				color:grey;
 				margin:10px;
 			}
-			
+
 			footer a, footer a:visited{
 				color:grey;
 			}
-			
+
 			footer a:hover {
 				color:black;
 			}
 		</style>
-		<script src="jquery-1.7.min.js"></script>
+		<script src="node_modules/velocity-animate/velocity.js"></script>
 		<script src="cards.js"></script>
-		<script>
-			var exampleCounter = 1;
-			var max = 0;
-			function stateChange() {
-				if (exampleCounter == 1) {
-					$('#exec').attr('disabled', 'disabled');
-				} else {
-					$('#prev').removeAttr('disabled');
-				}
-				if (exampleCounter > max) {
-					$('#exec').removeAttr('disabled');
-				} else {
-					$('#exec').attr('disabled', 'disabled');
-				}
-				if (exampleCounter <= max) {
-					$('#next').removeAttr('disabled');
-				} else {
-					$('#next').attr('disabled', 'disabled');
-				}
-				$('code').hide();
-				$('code#ex' + exampleCounter).css('display', 'block');
-			}
-			function next() {
-				exampleCounter++;
-				stateChange();
-			}
-			function prev() {
-				exampleCounter--;
-				stateChange();
-			}
-			function execute() {
-				var code = $('code#ex' + exampleCounter).text();
-				eval(code);
-				max = exampleCounter;
-				stateChange();
-			}
-		</script>
 	</head>
 	<body>
 		<h1>Cards.js</h1>
 		<h3>The easiest way to write card games in Javascript</h3>
-		<a href="https://github.com/einaregilsson/cards.js"><img src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>		
+		<a href="https://github.com/einaregilsson/cards.js"><img src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 		<p>cards.js is a library to write card games in javascript. It's not a framework, it does not try to tell you how to write your game logic, it's only about rendering playing cards, animating them and giving you a nice and simple way to use them in your games. Below you can see and play with an interactive demo. We also have <a href="javascript:alert('not yet though')">documentation</a> and <a href="javascript:alert('coming soon');">annotated source code for a full game</a>, a simplified
 		version of Crazy Eights called Borderline Eights.</p>
 		<img class="preload" src="img/cards.png"/>
 		<code id="ex1" style="display:block">//Start by initalizing the library
 cards.init({table:'#card-table'});
 //Create a new deck of cards
-deck = new cards.Deck(); 
+deck = new cards.Deck();
 //cards.all contains all cards, put them all in the deck
-deck.addCards(cards.all); 
+deck.addCards(cards.all);
 //No animation here, just get the deck onto the table.
 deck.render({immediate:true});
 		</code>
@@ -152,7 +115,6 @@ alert('Try clicking the deck now');
 		</code>
 		<code id="ex4">//Let's move the deck and setup a discard pile
 deck.x -= 50;
-deck.render();
 discardPile = new cards.Deck({faceUp:true});
 discardPile.x += 50;
 deck.render({callback:function() {
@@ -162,7 +124,7 @@ deck.render({callback:function() {
 		</code>
 		<code id="ex5">//Lets allow you to send cards to the discard pile
 lowerhand.click(function(card){
-	if (card.suit == discardPile.topCard().suit 
+	if (card.suit == discardPile.topCard().suit
 		|| card.rank == discardPile.topCard().rank) {
 		discardPile.addCard(card);
 		discardPile.render();
@@ -179,9 +141,9 @@ lowerhand.click(function(card){
 		</div>
 		<footer>
 			cards.js was created by <a href="http://einaregilsson.com">Einar Egilsson</a> and is licensed
-			under the MIT license. The card images were created by <a href="http://nicubunu.ro">Nicu Buculei</a> and are 
-			in the public domain. cards.js was extracted from the code used in 
-			<a href="https://cardgames.io/spades/">Spades</a>, 
+			under the MIT license. The card images were created by <a href="http://nicubunu.ro">Nicu Buculei</a> and are
+			in the public domain. cards.js was extracted from the code used in
+			<a href="https://cardgames.io/spades/">Spades</a>,
 			<a href="https://cardgames.io/cribbage/">Cribbage</a>,
 			<a href="https://cardgames.io/hearts/">Hearts</a>,
 			<a href="https://cardgames.io/whist/">Whist</a>,
@@ -191,5 +153,48 @@ lowerhand.click(function(card){
 			<a href="https://cardgames.io/freecell/">FreeCell</a>,
 			<a href="https://cardgames.io/shithead/">Shithead</a>, all written by Einar Egilsson.
 		</footer>
+		<script>
+			var exampleCounter = 1;
+			var max = 0;
+			var execButton = document.getElementById('exec');
+			var prevButton = document.getElementById('prev');
+			var nextButton = document.getElementById('next');
+			function stateChange() {
+				if (exampleCounter == 1) {
+					execButton.disabled = true;
+				} else {
+					prevButton.disabled = false;
+				}
+				if (exampleCounter > max) {
+					execButton.disabled = false;
+				} else {
+					execButton.disabled = true;
+				}
+				if (exampleCounter <= max) {
+					nextButton.disabled = false;
+				} else {
+					nextButton.disabled = true;
+				}
+				document.querySelectorAll('code').forEach(function(el) { el.style.display = 'none' });
+				var el = document.getElementById('ex' + exampleCounter);
+				if (el) {
+					el.style.display =  'block';
+				}
+			}
+			function next() {
+				exampleCounter++;
+				stateChange();
+			}
+			function prev() {
+				exampleCounter--;
+				stateChange();
+			}
+			function execute() {
+				var code = document.getElementById('ex' + exampleCounter).innerText;
+				eval(code);
+				max = exampleCounter;
+				stateChange();
+			}
+		</script>
 	</body>
 </html>

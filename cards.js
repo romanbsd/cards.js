@@ -1,5 +1,4 @@
-
-var cards = (function() {
+const cards = (function() {
   const DeckType = Object.freeze({
     STANDARD: 0,
     EUCHRE: 1,
@@ -29,7 +28,7 @@ var cards = (function() {
   var end = start + 12;
 
   function mouseEvent(ev) {
-    var card = $(this).data('card');
+    const card = this.card;
     if (card.container) {
       var handler = card.container._click;
       if (handler) {
@@ -38,17 +37,26 @@ var cards = (function() {
     }
   }
 
+  const hasOwnProperty = Object.prototype.hasOwnProperty;
+
   function init(options) {
     if (options) {
-      for (var i in options) {
-        if (opt.hasOwnProperty(i)) {
+      for (let i in options) {
+        if (hasOwnProperty.call(opt, i)) {
           opt[i] = options[i];
         }
       }
     }
+    if (typeof opt.table === 'string') {
+      opt.table = document.querySelector(opt.table);
+    }
+    const style = window.getComputedStyle(opt.table)
+    const position = style.getPropertyValue('position');
+    if (position == 'static') {
+      opt.table.style.position = 'relative';
+    }
     switch (opt.type) {
       case DeckType.STANDARD:
-        opt.acesHigh = false;
         start = opt.acesHigh ? 2 : 1;
         end = start + 12;
         break;
@@ -62,13 +70,8 @@ var cards = (function() {
         opt.loop = 2;
         break;
     }
-
-    opt.table = $(opt.table)[0];
-    if ($(opt.table).css('position') == 'static') {
-      $(opt.table).css('position', 'relative');
-    }
     for (let l = 0; l < opt.loop; l++)
-      for (var i = start; i <= end; i++) {
+      for (let i = start; i <= end; i++) {
         all.push(new Card('h', i, opt.table));
         all.push(new Card('s', i, opt.table));
         all.push(new Card('d', i, opt.table));
@@ -80,8 +83,6 @@ var cards = (function() {
     if (opt.redJoker) {
       all.push(new Card('rj', 0, opt.table));
     }
-
-    $('.card').click(mouseEvent);
     shuffle(all);
   }
 
@@ -109,13 +110,19 @@ var cards = (function() {
       this.rank = rank;
       this.name = suit.toUpperCase() + rank;
       this.faceUp = false;
-      this.el = $('<div/>').css({
-        width: opt.cardSize.width,
-        height: opt.cardSize.height,
-        "background-image": 'url(' + opt.cardsUrl + ')',
-        position: 'absolute',
-        cursor: 'pointer'
-      }).addClass('card').data('card', this).appendTo($(table));
+
+      const el = this.el = document.createElement('div');
+      const style = el.style;
+      style.width = opt.cardSize.width + 'px';
+      style.height = opt.cardSize.height + 'px';
+      style.backgroundImage = 'url(' + opt.cardsUrl + ')';
+      style.position = 'absolute';
+      style.cursor = 'pointer';
+      el.classList.add('card');
+      el.card = this;
+      el.onclick = mouseEvent;
+      table.appendChild(el);
+
       this.showCard();
       this.moveToFront();
     },
@@ -129,20 +136,16 @@ var cards = (function() {
         top: y - (opt.cardSize.height / 2),
         left: x - (opt.cardSize.width / 2)
       };
-      $(this.el).animate(props, speed || opt.animationSpeed, callback);
+      this.el.velocity(props, speed || opt.animationSpeed, callback);
     },
 
     rotate: function(angle) {
-      $(this.el)
-        .css('-webkit-transform', 'rotate(' + angle + 'deg)')
-        .css('-moz-transform', 'rotate(' + angle + 'deg)')
-        .css('-ms-transform', 'rotate(' + angle + 'deg)')
-        .css('transform', 'rotate(' + angle + 'deg)')
-        .css('-o-transform', 'rotate(' + angle + 'deg)');
+      const style = this.el.style;
+      style.webkitTransform = style.MozTransform = style.msTransform = style.transform = style.OTransform = 'rotate(' + angle + 'deg)';
     },
 
     showCard: function() {
-      var offsets = {
+      const offsets = {
         "c": 0,
         "d": 1,
         "h": 2,
@@ -158,17 +161,17 @@ var cards = (function() {
       xpos = -rank * opt.cardSize.width;
       ypos = -offsets[this.suit] * opt.cardSize.height;
       this.rotate(0);
-      $(this.el).css('background-position', xpos + 'px ' + ypos + 'px');
+      this.el.style.backgroundPosition = xpos + 'px ' + ypos + 'px';
     },
 
-    hideCard: function(position) {
+    hideCard: function() {
       var y = opt.cardback == 'red' ? 0 * opt.cardSize.height : -1 * opt.cardSize.height;
-      $(this.el).css('background-position', '0px ' + y + 'px');
+      this.el.style.backgroundPosition = '0px ' + y + 'px';
       this.rotate(0);
     },
 
     moveToFront: function() {
-      $(this.el).css('z-index', zIndexCounter++);
+      this.el.style.zIndex = zIndexCounter++;
     }
   };
 
@@ -210,8 +213,8 @@ var cards = (function() {
 
     init: function(options) {
       options = options || {};
-      this.x = options.x || $(opt.table).width() / 2;
-      this.y = options.y || $(opt.table).height() / 2;
+      this.x = options.x || opt.table.clientWidth / 2;
+      this.y = options.y || opt.table.clientHeight / 2;
       this.faceUp = options.faceUp;
     },
 
@@ -244,8 +247,8 @@ var cards = (function() {
         var card = this[i];
         zIndexCounter++;
         card.moveToFront();
-        var top = parseInt($(card.el).css('top'));
-        var left = parseInt($(card.el).css('left'));
+        var top = parseInt(card.el.style.top);
+        var left = parseInt(card.el.style.left);
         if (top != card.targetTop || left != card.targetLeft) {
           var props = {
             top: card.targetTop,
@@ -253,9 +256,12 @@ var cards = (function() {
             queue: false
           };
           if (options.immediate) {
-            $(card.el).css(props);
+            const style = card.el.style;
+            style.top = card.targetTop + 'px';
+            style.left = card.targetLeft + 'px';
+            card.el.velocityData && (card.el.velocityData.cache = {});
           } else {
-            $(card.el).animate(props, speed);
+            card.el.velocity(props, speed);
           }
         }
       }
@@ -295,8 +301,7 @@ var cards = (function() {
 
   Deck.prototype = new Container();
   Deck.prototype.extend({
-    calcPosition: function(options) {
-      options = options || {};
+    calcPosition: function() {
       var left = Math.round(this.x - opt.cardSize.width / 2, 0);
       var top = Math.round(this.y - opt.cardSize.height / 2, 0);
       var condenseCount = 6;
@@ -342,8 +347,7 @@ var cards = (function() {
   }
   Hand.prototype = new Container();
   Hand.prototype.extend({
-    calcPosition: function(options) {
-      options = options || {};
+    calcPosition: function() {
       var width = opt.cardSize.width + (this.length - 1) * opt.cardSize.padding;
       var left = Math.round(this.x - width / 2);
       var top = Math.round(this.y - opt.cardSize.height / 2, 0);
@@ -364,8 +368,7 @@ var cards = (function() {
 
   Pile.prototype = new Container();
   Pile.prototype.extend({
-    calcPosition: function(options) {
-      options = options || {};
+    calcPosition: function() {
     },
 
     toString: function() {

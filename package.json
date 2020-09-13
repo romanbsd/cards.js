@@ -1,0 +1,22 @@
+{
+  "name": "cards.js",
+  "version": "1.0.0",
+  "description": "cards.js ========",
+  "main": "cards.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/einaregilsson/cards.js.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/einaregilsson/cards.js/issues"
+  },
+  "homepage": "https://github.com/einaregilsson/cards.js#readme",
+  "devDependencies": {
+    "velocity-animate": "^2.0.6"
+  }
+}
