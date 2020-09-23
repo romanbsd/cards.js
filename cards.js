@@ -186,6 +186,12 @@ const cards = (function() {
     }
   }
   Container.prototype.extend({
+    options: opt,
+
+    hasCard: function (card) {
+      return this.indexOf(card) !== -1;
+    },
+
     addCard: function(card) {
       this.addCards([card]);
     },
@@ -210,6 +216,18 @@ const cards = (function() {
         }
       }
       return false;
+    },
+
+    ofSuit: function (suit) {
+      return this.filter(function (card) {
+        return suit == card.suit;
+      }).sort(function (a, b) {
+        return a.rank - b.rank;
+      });
+    },
+
+    shuffle: function () {
+      shuffle(this);
     },
 
     init: function(options) {
